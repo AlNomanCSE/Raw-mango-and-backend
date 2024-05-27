@@ -1,0 +1,22 @@
+{
+  "name": "backendone",
+  "version": "1.0.0",
+  "description": "a basic backend app",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "node",
+    "noman",
+    "one",
+    "app"
+  ],
+  "author": "Abdullah Al Noman",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
