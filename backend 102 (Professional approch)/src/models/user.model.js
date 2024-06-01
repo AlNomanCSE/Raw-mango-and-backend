@@ -30,10 +30,7 @@ const userSchma = new Schema(
     coverImage: {
       type: String, //cloudinary rul
     },
-    watchHitory: {
-      type: Schema.Types.ObjectId,
-      ref: "Video",
-    },
+    watchHitory: [{ type: Schema.Types.ObjectId, ref: "Video" }],
     password: {
       type: String,
       required: [true, "Password is required"],
@@ -47,24 +44,21 @@ const userSchma = new Schema(
   }
 );
 
-
-
-
 userSchma.pre("save", async function (next) {
-  if (this.isModified("password")) return next();
-  this.password =await bcrypt.hash(this.password, 10);
-  next();
+  if (!this.isModified("password")) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    return next(error);
+  }
 });
-
-
 
 userSchma.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
-
-
-
-
 
 userSchma.methods.generateAccessToken = function () {
   return jwt.sign(
@@ -78,10 +72,6 @@ userSchma.methods.generateAccessToken = function () {
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
   );
 };
-
-
-
-
 
 userSchma.methods.generateRefreshToken = function () {
   return jwt.sign(
